@@ -91,7 +91,86 @@ document.addEventListener('DOMContentLoaded', () => {
 9. npm run webpack => generate bundle.js
 10. in congif/enviornment.file add 'Jbuilder.key_format camelize: :lower' 
 11. in util folder, create an api_util.js -> make ajax request / import actions
-12. 
+```
+export const fetchAllPokemon = () => {
+    return (
+        $.ajax({
+            method: 'GET',
+            url: 'api/pokemon'
+        })
+    )
+}
+```
+12. in actions folder => xx_actions.js 
+```
+import * as APIUtil from '../util/api_util';
+
+export const RECEIVE_ALL_POKEMON = 'RECEIVE_ALL_POKEMON';
+
+export const receiveAllPokemon = pokemon => ({
+  type: RECEIVE_ALL_POKEMON,
+  pokemon
+})
+
+export const requestAllPokemon = () => (dispatch) => (
+  APIUtil.fetchAllPokemon().then(pokemon => dispatch(receiveAllPokemon(pokemon))) 
+)
+```
+13. in reducer folder, create root_reducer.js entities_reducer.js xx_reducer.js
+```
+root reducer 
+import { combineReducers } from "redux";
+import {entitiesReducer} from './entities_reducer';
+
+const rootReducer = combineReducers({
+  entities: entitiesReducer
+});
+export default rootReducer
+```
+```
+import {combineReducers} from 'redux';
+import pokemonReducer from './pokemon_reducer';
+
+export const entitiesReducer = combineReducers({
+  pokemon: pokemonReducer,
+})
+```
+```
+import { RECEIVE_ALL_POKEMON } from '../actions/pokemon_actions';
+
+
+const pokemonReducer = (state = {}, action) => {
+    Object.freeze(state);
+    const nextState = Object.assign({}, state);
+    switch(action.type) {
+        case RECEIVE_ALL_POKEMON:
+            return {...nextState, ...action.pokemon};
+        default:
+            return state; 
+    }
+}
+
+
+export default pokemonReducer;
+```
+14. in store folder, create store.js 
+```
+import {createStore, applyMiddleware} from 'redux';
+import rootReducer from '../reducers/root_reducer';
+import logger from 'redux-logger';
+
+import thunk from '../middleware/thunk';
+
+export const configureStore = () => (
+  createStore(
+    rootReducer,
+    applyMiddleware(thunk, logger)
+  )
+);
+```
+15. in reducers folder, create selectors.js
+
+
 
 
 
