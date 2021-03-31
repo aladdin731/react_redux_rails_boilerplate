@@ -78,6 +78,7 @@ module.exports = {
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {configureStore} from './store/store';
+import {Route, HashRouter} from 'react-router-dom';
 import Root from './components/root';
 
 
