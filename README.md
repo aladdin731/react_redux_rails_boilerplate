@@ -1,7 +1,23 @@
 # react_redux_rails_boilerplate
 
 ## Set up backend
-1. create the template
+
+1. rails _5.2.3_ new project_name -G --database=postgresql --skip-turbolinks
+2. 
+3. Item 2
+4. Item 3
+5. Item 1
+6. Item 2
+7. Item 3
+8. Item 1
+9. Item 2
+10. Item 3
+11. Item 1
+12. Item 2
+13. Item 3
+
+
+3. create the template
   rails _5.2.3_ new project_name -G --database=postgresql --skip-turbolinks
   **if you forget to add -g, do 'git rm --cached . -rf'**
 2. in gem file 
