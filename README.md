@@ -43,8 +43,8 @@
 3. in package.json, make sure the webpack version is under 5, you can change the version to 4.29.3
 4. Add a "webpack" script to your package.json that runs webpack --watch --mode=development
 5. create a file - webpack.config.js 
-const path = require('path');
 ```
+const path = require('path');
 module.exports = {
   context: __dirname,
   entry: './frontend/entry.jsx',
@@ -77,14 +77,14 @@ module.exports = {
 ```
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {} from './util/api_util';
-import {} from './actions/pokemon_actions';
 import {configureStore} from './store/store';
+import Root from './components/root';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootEl = document.getElementById('root');
   const store = configureStore();
-  ReactDOM.render(<h1>Pokedex</h1>, rootEl);
+  ReactDOM.render(<Root store={store}/>, rootEl);
 });
 ```
 
@@ -169,8 +169,65 @@ export const configureStore = () => (
 );
 ```
 15. in reducers folder, create selectors.js
+16. in components folder, create root.jsx 
+```
+import React from 'react';
+import {Provider} from 'react-redux';
+import PokemonIndexContainer from './../components/pokemon/pokemon_index_container';
 
+const Root = ({store}) => (
+    <Provider store={store}>
+       <PokemonIndexContainer />
+    </Provider>
+)
 
+export default Root;
+```
+17. in components floder, create pokemon/pokemon_index_container.jsx
+```
+import {connect} from 'react-redux';
+import {selectAllPokemon} from '../../reducers/selectors';
+import {requestAllPokemon} from '../../actions/pokemon_actions.js';
+import PokemonIndex from './pokemon_index';
 
+const mapStateToProps = state => ({
+   pokemon: selectAllPokemon(state),
+})
 
+const mapDispatchToProps = dispatch => ({
+    requestAllPokemon: () => dispatch(requestAllPokemon())
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(PokemonIndex);
+```
+18. in components floder, create pokemon/pokemon_index.jsx
+```
+import React from 'react';
+
+class PokemonIndex extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
+
+    componentDidMount() {
+        this.props.requestAllPokemon();
+    }
+
+    render(){
+        return(
+            <div>
+                <ul>
+                    {this.props.pokemon.map(poke => <li key={poke.id}>{poke.name}</li>)}
+                </ul>
+            </div>
+        )
+    }
+}
+
+export default PokemonIndex;
+```
 
