@@ -3,23 +3,7 @@
 ## Set up backend
 
 1. rails _5.2.3_ new project_name -G --database=postgresql --skip-turbolinks
-2. 
-3. Item 2
-4. Item 3
-5. Item 1
-6. Item 2
-7. Item 3
-8. Item 1
-9. Item 2
-10. Item 3
-11. Item 1
-12. Item 2
-13. Item 3
-
-
-3. create the template
-  rails _5.2.3_ new project_name -G --database=postgresql --skip-turbolinks
-  **if you forget to add -g, do 'git rm --cached . -rf'**
+    **if you forget to add -g, do 'git rm --cached . -rf'**
 2. in gem file 
   group :development do
     gem 'better_errors'
@@ -40,14 +24,13 @@
 7. do migration => rails db:migrate
 8. do model (session has no model)
 9. rails g controller api/users 
-10. rails g controller static_pages
-  **  <div id="root">React is not working</div> ** 
-12. config/routes.fb
-    # add /api to request path to route to teas
+10. rails g controller static_pages 
+  ** def root end ** 
+  **  <div id="root">React is not working</div> ** in views/static_pages/root.html 
+11. config/routes.fb
   namespace :api, defaults: {format: :json} do
     resources :teas, only: [:index, :create, :show]
   end
-  # if the request is get '/' route to here
   root to: 'static_pages#root' 
 13. views => api/user/index.json.jbuilder or _
 14. rails c => check database
@@ -55,6 +38,60 @@
 
 
 ## Set up frontend
-1. 
+1. npm init -y => package.json 
+2. npm install webpack webpack-cli react react-dom react-router-dom redux react-redux redux-logger @babel/core @babel/preset-env @babel/preset-react babel-loader
+3. in package.json, make sure the webpack version is under 5, you can change the version to 4.29.3
+4. Add a "webpack" script to your package.json that runs webpack --watch --mode=development
+5. create a file - webpack.config.js 
+const path = require('path');
+```
+module.exports = {
+  context: __dirname,
+  entry: './frontend/entry.jsx',
+  output: {
+    path: path.resolve(__dirname, 'app', 'assets', 'javascripts'),
+    filename: 'bundle.js'
+  },
+  resolve: {
+    extensions: ['.js', '.jsx', '*']
+  },
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/env', '@babel/react']
+          }
+        },
+      }
+    ]
+  },
+  devtool: 'source-map'
+};
+```
+7. create frontend folder in the root folder
+8. in frontend folder, create entry.jsx, and actions/reducers/store/util/components
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {} from './util/api_util';
+import {} from './actions/pokemon_actions';
+import {configureStore} from './store/store';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const rootEl = document.getElementById('root');
+  const store = configureStore();
+  ReactDOM.render(<h1>Pokedex</h1>, rootEl);
+});
+```
+
+9. npm run webpack => generate bundle.js
+10. in congif/enviornment.file add 'Jbuilder.key_format camelize: :lower' 
+11. in util folder, create an api_util.js -> make ajax request / import actions
+12. 
+
 
 
