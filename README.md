@@ -2,9 +2,9 @@
 
 ## Set up backend
 
-1. rails _5.2.3_ new project_name -G --database=postgresql --skip-turbolinks
+1. rails _5.2.3_ new boilerplate -G --database=postgresql --skip-turbolinks
     **if you forget to add -g, do 'git rm --cached . -rf'**
-2. in gem file 
+2. in gem file  and comment in gem 'bcrypt'
   group :development do
     gem 'better_errors'
     gem 'binding_of_caller'
@@ -13,16 +13,16 @@
     gem 'jquery-rails'
   end
 3. bundle install
-4. in app/assets/javascripts/application.js -- order matters
+4. in app/assets/javascripts/application.js -- order matters - add  //= require jquery
   //= require jquery
   //= require rails-ujs
   //= require activestorage
   //= require_tree .
-5. rails db:setup  
+5. create .gitignore and include node_modules/  &  bundle.js  &  bundle.js.map
+6. rails db:setup  
     **short for rails db:create db:schema:load db:seed**
-6. rails g model user name:string.... 
-7. do migration => rails db:migrate
-8. do model (session has no model)
+7. rails g model user name:string.... 
+8. do migration => rails db:migrate => do model (session has no model)
 9. rails g controller api/users 
 10. rails g controller static_pages 
   ** def root end ** 
@@ -37,9 +37,10 @@
 15. rails s => run server
 
 
+
 ## Set up frontend
 1. npm init -y => package.json 
-2. npm install webpack webpack-cli react react-dom react-router-dom redux react-redux redux-logger @babel/core @babel/preset-env @babel/preset-react babel-loader
+2. npm install webpack webpack-cli react react-dom react-router react-router-dom redux react-redux redux-logger @babel/core @babel/preset-env @babel/preset-react babel-loader
 3. in package.json, make sure the webpack version is under 5, you can change the version to 4.29.3
 4. Add a "webpack" script to your package.json that runs webpack --watch --mode=development
 5. create a file - webpack.config.js 
@@ -73,6 +74,15 @@ module.exports = {
 };
 ```
 7. create frontend folder in the root folder
+   frontend
+      + actions
+      + components
+        + root.jsx
+        + app.jsx
+      + reducers
+      + store
+      + util
+      entry.jsx
 8. in frontend folder, create entry.jsx, and actions/reducers/store/util/components
 ```
 import React from 'react';
@@ -175,10 +185,13 @@ export const configureStore = () => (
 import React from 'react';
 import {Provider} from 'react-redux';
 import PokemonIndexContainer from './../components/pokemon/pokemon_index_container';
+import {HashRouter} from 'react-router-dom'
 
 const Root = ({store}) => (
     <Provider store={store}>
+      <HashRouter>
        <PokemonIndexContainer />
+      <HashRouter />
     </Provider>
 )
 
