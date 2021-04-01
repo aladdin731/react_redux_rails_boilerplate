@@ -85,166 +85,230 @@ module.exports = {
       + store
       + util
       entry.jsx
+
 8. in frontend folder, create entry.jsx, and actions/reducers/store/util/components
 ```
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {configureStore} from './store/store';
-import {Route, HashRouter} from 'react-router-dom';
-import Root from './components/root';
-
-
 document.addEventListener('DOMContentLoaded', () => {
-  const rootEl = document.getElementById('root');
-  const store = configureStore();
-  ReactDOM.render(<Root store={store}/>, rootEl);
+  let store;
+  if (window.currentUser) {
+    const preloadedState = {
+      session: { id: window.currentUser.id },
+      entities: {
+        users: { [window.currentUser.id]: window.currentUser }
+      }
+    };
+    store = configureStore(preloadedState);
+    delete window.currentUser;
+  } else {
+    store = configureStore();
+  }
+  const root = document.getElementById('root');
+  ReactDOM.render(<Root store={store} />, root);
 });
 ```
 
 9. npm run webpack => generate bundle.js
 10. in congif/enviornment.file add 'Jbuilder.key_format camelize: :lower' 
-11. in util folder, create an api_util.js -> make ajax request / import actions
+11. in util folder, create an api_util.js + session_api_util.js + route_uril.jsx
 ```
-export const fetchAllPokemon = () => {
-    return (
-        $.ajax({
-            method: 'GET',
-            url: 'api/pokemon'
-        })
+export const login = user => (
+  $.ajax({
+    method: 'POST',
+    url: '/api/session',
+    data: { user }
+  })
+);
+
+export const signup = user => (
+  $.ajax({
+    method: 'POST',
+    url: '/api/user',
+    data: { user }
+  })
+);
+
+export const logout = () => (
+  $.ajax({
+    method: 'DELETE',
+    url: '/api/session'
+  })
+);
+```
+```
+import React from 'react';
+import { connect } from 'react-redux';
+import { Route, Redirect, withRouter } from 'react-router-dom';
+
+const Auth = ({ component: Component, path, loggedIn, exact }) => (
+  <Route path={path} exact={exact} render={(props) => (
+    !loggedIn ? (
+      <Component {...props} />
+    ) : (
+      <Redirect to="/" />
     )
-}
-```
-12. in actions folder => xx_actions.js 
-```
-import * as APIUtil from '../util/api_util';
+  )} />
+);
 
-export const RECEIVE_ALL_POKEMON = 'RECEIVE_ALL_POKEMON';
+const Protected = ({ component: Component, path, loggedIn, exact }) => (
+  <Route path={path} exact={exact} render={(props) => (
+     loggedIn ? (
+      <Component {...props} />
+    ) : (
+      <Redirect to="/login" />
+    )
+  )} />
+);
 
-export const receiveAllPokemon = pokemon => ({
-  type: RECEIVE_ALL_POKEMON,
-  pokemon
-})
+const mapStateToProps = state => (
+  {loggedIn: Boolean(state.session.id)}
+);
 
-export const requestAllPokemon = () => (dispatch) => (
-  APIUtil.fetchAllPokemon().then(pokemon => dispatch(receiveAllPokemon(pokemon))) 
-)
+export const AuthRoute = withRouter(connect(mapStateToProps)(Auth));
+
+export const ProtectedRoute = withRouter(connect(mapStateToProps)(Protected));
 ```
-13. in reducer folder, create root_reducer.js entities_reducer.js xx_reducer.js
+12. in actions folder => session_actions.js
 ```
-root reducer 
-import { combineReducers } from "redux";
-import {entitiesReducer} from './entities_reducer';
+import * as APIUtil from '../util/session_api_util';
+
+export const RECEIVE_CURRENT_USER = 'RECEIVE_CURRENT_USER';
+export const LOGOUT_CURRENT_USER = 'LOGOUT_CURRENT_USER';
+export const RECEIVE_SESSION_ERRORS = 'RECEIVE_SESSION_ERRORS';
+
+export const receiveCurrentUser = currentUser => ({
+  type: RECEIVE_CURRENT_USER,
+  currentUser
+});
+
+export const logoutCurrentUser = () => ({
+  type: LOGOUT_CURRENT_USER,
+});
+
+export const receiveErrors = errors => ({
+  type: RECEIVE_SESSION_ERRORS,
+  errors
+});
+
+export const signup = user => dispatch => (
+  APIUtil.signup(user).then(user => (
+    dispatch(receiveCurrentUser(user))
+  ), err => (
+    dispatch(receiveErrors(err.responseJSON))
+  ))
+);
+
+export const login = user => dispatch => (
+  APIUtil.login(user).then(user => (
+    dispatch(receiveCurrentUser(user))
+  ), err => (
+    dispatch(receiveErrors(err.responseJSON))
+  ))
+);
+
+export const logout = () => dispatch => (
+  APIUtil.logout().then(user => (
+    dispatch(logoutCurrentUser())
+  ))
+);
+```
+
+13. in reducer folder, create root_reducer.js entities_reducer.js session_reducer.js session_errors_reducers.js
+```
+import { combineReducers } from 'redux';
+
+import entities from './entities_reducer';
+import ui from './ui_reducer';
+import session from './session_reducer';
+import errors from './errors_reducer';
 
 const rootReducer = combineReducers({
-  entities: entitiesReducer
+  entities,
+  session,
+  ui,
+  errors,
 });
-export default rootReducer
+
+export default rootReducer;
 ```
 ```
-import {combineReducers} from 'redux';
-import pokemonReducer from './pokemon_reducer';
+import {
+  RECEIVE_CURRENT_USER,
+  LOGOUT_CURRENT_USER,
+} from '../actions/session_actions';
 
-export const entitiesReducer = combineReducers({
-  pokemon: pokemonReducer,
-})
+const _nullUser = Object.freeze({
+  id: null
+});
+
+const sessionReducer = (state = _nullUser, action) => {
+  Object.freeze(state);
+  switch(action.type) {
+    case RECEIVE_CURRENT_USER:
+      return { id: action.currentUser.id };
+    case LOGOUT_CURRENT_USER:
+      return _nullUser;
+    default:
+      return state;
+  }
+};
+
+export default sessionReducer;
 ```
 ```
-import { RECEIVE_ALL_POKEMON } from '../actions/pokemon_actions';
+import {
+  RECEIVE_SESSION_ERRORS,
+  RECEIVE_CURRENT_USER,
+} from '../actions/session_actions';
 
-
-const pokemonReducer = (state = {}, action) => {
-    Object.freeze(state);
-    const nextState = Object.assign({}, state);
-    switch(action.type) {
-        case RECEIVE_ALL_POKEMON:
-            return {...nextState, ...action.pokemon};
-        default:
-            return state; 
-    }
-}
-
-
-export default pokemonReducer;
+export default (state = [], action) => {
+  Object.freeze(state);
+  switch (action.type) {
+    case RECEIVE_SESSION_ERRORS:
+      return action.errors;
+    case RECEIVE_CURRENT_USER:
+      return [];
+    default:
+      return state;
+  }
+};
 ```
 14. in store folder, create store.js 
 ```
-import {createStore, applyMiddleware} from 'redux';
-import rootReducer from '../reducers/root_reducer';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 
-import thunk from '../middleware/thunk';
+import rootReducer from '../reducers/root_reducer';
 
-export const configureStore = () => (
+const configureStore = (preloadedState = {}) => (
   createStore(
     rootReducer,
+    preloadedState,
     applyMiddleware(thunk, logger)
   )
 );
+
+export default configureStore;
 ```
 15. in reducers folder, create selectors.js
 16. in components folder, create root.jsx 
 ```
 import React from 'react';
-import {Provider} from 'react-redux';
-import PokemonIndexContainer from './../components/pokemon/pokemon_index_container';
-import {HashRouter} from 'react-router-dom'
+import { Provider } from 'react-redux';
+import { HashRouter } from 'react-router-dom';
 
-const Root = ({store}) => (
-    <Provider store={store}>
-      <HashRouter>
-       <PokemonIndexContainer />
-      <HashRouter />
-    </Provider>
-)
+import App from './app';
+
+const Root = ({ store }) => (
+  <Provider store={store}>
+    <HashRouter>
+      <App />
+    </HashRouter>
+  </Provider>
+);
 
 export default Root;
 ```
-17. in components floder, create pokemon/pokemon_index_container.jsx
-```
-import {connect} from 'react-redux';
-import {selectAllPokemon} from '../../reducers/selectors';
-import {requestAllPokemon} from '../../actions/pokemon_actions.js';
-import PokemonIndex from './pokemon_index';
 
-const mapStateToProps = state => ({
-   pokemon: selectAllPokemon(state),
-})
-
-const mapDispatchToProps = dispatch => ({
-    requestAllPokemon: () => dispatch(requestAllPokemon())
-})
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(PokemonIndex);
-```
-18. in components floder, create pokemon/pokemon_index.jsx
-```
-import React from 'react';
-
-class PokemonIndex extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {}
-    }
-
-    componentDidMount() {
-        this.props.requestAllPokemon();
-    }
-
-    render(){
-        return(
-            <div>
-                <ul>
-                    {this.props.pokemon.map(poke => <li key={poke.id}>{poke.name}</li>)}
-                </ul>
-            </div>
-        )
-    }
-}
-
-export default PokemonIndex;
-```
 
 

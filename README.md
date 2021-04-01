@@ -76,3 +76,4 @@ module.exports = {
       + store
       + util
       entry.jsx
+8. in congif/enviornment.file add 'Jbuilder.key_format camelize: :lower' 

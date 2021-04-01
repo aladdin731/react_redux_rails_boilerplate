@@ -26,20 +26,18 @@
    4. receiveCurrentUser -- signup/login
    5. logoutCurrentUser -- logout 
    
-6. reducers = session + root
+6. reducers = session + session_errors + root + entities_reducer.js + errors
    1. session.js = _nullSession + sessionReducer
       1. import constant  
    2. add to root 
 
 7. components
-   1. session
+   1. session folder
       1. signup_container - need action/session createNewUser thunk action
-      2. signup.jsx - signup form 
+      2. sessionForm
       3. login_container - need action/session login thunk action 
-      4. login.jsx - login form 
-   2. navbar - change link(signup/login) or action(logout)
-      1. navbar_container
-      2. welcomebar_container
-      3. 
+   2. greeting floder - change link(signup/login) or action(logout)
+      1. greeting _ container
+      2. greeting
    3. app.jsx
    4. root.jsx
