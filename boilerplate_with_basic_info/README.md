@@ -78,12 +78,24 @@ module.exports = {
 7. create frontend folder in the root folder
    frontend
       + actions
+        + session_actions.js
       + components
+        + greeting
+        + session_form
         + root.jsx
         + app.jsx
       + reducers
+        + entities_reducer.js
+        + errors_reducer.js
+        + root_reducer.js
+        + selectors.js
+        + session_reducer.js
+        + session_errors_reducer.js
       + store
+        + store.js
       + util
+        + route_util.js
+        + session_api_util.js
       entry.jsx
 
 8. in frontend folder, create entry.jsx, and actions/reducers/store/util/components
@@ -212,7 +224,7 @@ export const logout = () => dispatch => (
 );
 ```
 
-13. in reducer folder, create root_reducer.js entities_reducer.js session_reducer.js session_errors_reducers.js
+13. in reducer folder, create root_reducer.js entities_reducer.js session_reducer.js session_errors_reducers.js errors_reducer
 ```
 import { combineReducers } from 'redux';
 
@@ -272,6 +284,15 @@ export default (state = [], action) => {
   }
 };
 ```
+```
+import { combineReducers } from 'redux';
+
+import session from './session_errors_reducer';
+
+export default combineReducers({
+  session
+});
+```
 14. in store folder, create store.js 
 ```
 import { createStore, applyMiddleware } from 'redux';
@@ -309,6 +330,14 @@ const Root = ({ store }) => (
 
 export default Root;
 ```
+
+
+1.  rails g model user 
+2.  rails g controller api/users 
+3.  rails g controller api/sessions
+4.  views/layouts/application.html.erb
+5.  views/static_pages/root.html.erb
+
 
 
 
