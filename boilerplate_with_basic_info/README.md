@@ -28,7 +28,18 @@
 9. rails g controller api/users 
 10. rails g controller static_pages 
   ** def root end ** 
-  **  <div id="root">React is not working</div> ** in views/static_pages/root.html.erb
+ 
+ in views/static_pages/root.html.erb
+  
+<% if logged_in? %>
+  <script type="text/javascript">
+    window.currentUser = <%= render(
+      "api/users/user.json.jbuilder",
+      user: current_user
+    ).html_safe %>
+  </script>
+<% end %>
+ <div id="root">React is not working</div>
 11. config/routes.fb
   namespace :api, defaults: {format: :json} do
     resources :teas, only: [:index, :create, :show]
