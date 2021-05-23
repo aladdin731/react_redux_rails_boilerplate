@@ -30,7 +30,7 @@
   ** def root end ** 
  
  in views/static_pages/root.html.erb
-  
+  ```
 <% if logged_in? %>
   <script type="text/javascript">
     window.currentUser = <%= render(
@@ -40,6 +40,7 @@
   </script>
 <% end %>
  <div id="root">React is not working</div>
+ ```
 11. config/routes.fb
   namespace :api, defaults: {format: :json} do
     resources :teas, only: [:index, :create, :show]
