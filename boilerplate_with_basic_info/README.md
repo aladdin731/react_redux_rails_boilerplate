@@ -5,7 +5,7 @@
 ## Set up backend
 
 1. rails _5.2.3_ new boilerplate_with_basic_info -G --database=postgresql --skip-turbolinks
-    **if you forget to add -g, do 'git rm --cached . -rf'**
+    **if you forget to add -g, do 'git rm --cached . -rf' 这里是_5.2.3_**
 2. in gem file  and comment in gem 'bcrypt'
   group :development do
     gem 'better_errors'
