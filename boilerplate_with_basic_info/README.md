@@ -54,7 +54,7 @@
 
 ## Set up frontend
 1. npm init -y => package.json 
-2. npm install webpack webpack-cli react react-dom react-router react-router-dom redux react-redux redux-logger @babel/core @babel/preset-env @babel/preset-react babel-loader
+2. npm install webpack webpack-cli react react-dom react-router react-router-dom redux react-redux redux-logger redux-thunk @babel/core @babel/preset-env @babel/preset-react babel-loader
 3. in package.json, make sure the webpack version is under 5, you can change the version to 4.29.3
 4. "start": "webpack --watch --mode=development"  => npm start is ok
 5. create a file - webpack.config.js 
