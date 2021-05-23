@@ -77,3 +77,9 @@ module.exports = {
       + util
       entry.jsx
 8. in congif/enviornment.file add 'Jbuilder.key_format camelize: :lower' 
+
+ready to production
+1. Move the jquery-rails gem to the top-level of your Gemfile so that it is available in both development and production
+2. Move logger 
+3. db seed.rb
+4. https://open.appacademy.io/learn/swe-in-person/full-stack-project/deploying-to-heroku
