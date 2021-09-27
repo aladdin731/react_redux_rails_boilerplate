@@ -19,14 +19,18 @@
   //= require activestorage
   //= require_tree .
 5. create .gitignore and include node_modules/  &  bundle.js  &  bundle.js.map
+   # Ignore master key for decrypting credentials and more.
+  /config/master.key
+  
 6. rails db:setup  
     **short for rails db:create db:schema:load db:seed**
 7. rails g model user name:string.... 
 8. do migration => rails db:migrate => do model (session has no model)
-9. rails g controller api/users 
+9.  rails g controller api/users 
 10. rails g controller static_pages 
   ** def root end ** 
   **  <div id="root">React is not working</div> ** in views/static_pages/root.html.erb
+  routes.rb => root to: 'static_pages#root'
 
 
 
@@ -56,6 +60,7 @@ module.exports = {
         exclude: /(node_modules)/,
         use: {
           loader: 'babel-loader',
+          // latest webpack 把query 改成options
           options: {
             presets: ['@babel/env', '@babel/react']
           }
@@ -76,4 +81,4 @@ module.exports = {
       + store
       + util
       entry.jsx
-8. in congif/enviornment.file add 'Jbuilder.key_format camelize: :lower' 
+8. in config/enviornment.file add 'Jbuilder.key_format camelize: :lower' 
