@@ -5,8 +5,12 @@
 ## Set up backend
 
 1. rails _5.2.3_ new boilerplate_with_basic_info -G --database=postgresql --skip-turbolinks
+<<<<<<< HEAD
     **if you forget to add -g, do 'git rm --cached . -rf'**
     **if you have nested git, do 'rm -rf .git'**
+=======
+    **if you forget to add -g, do 'git rm --cached . -rf' 这里是_5.2.3_**
+>>>>>>> 57a1d26e6323011a337222996a1bfe303cf4fc3c
 2. in gem file  and comment in gem 'bcrypt'
   group :development do
     gem 'better_errors'
@@ -38,7 +42,19 @@
 9.  rails g controller api/users 
 10. rails g controller static_pages 
   ** def root end ** 
-  **  <div id="root">React is not working</div> ** in views/static_pages/root.html.erb
+ 
+ in views/static_pages/root.html.erb
+  ```
+<% if logged_in? %>
+  <script type="text/javascript">
+    window.currentUser = <%= render(
+      "api/users/user.json.jbuilder",
+      user: current_user
+    ).html_safe %>
+  </script>
+<% end %>
+ <div id="root">React is not working</div>
+ ```
 11. config/routes.fb
   namespace :api, defaults: {format: :json} do
     resources :teas, only: [:index, :create, :show]
@@ -52,7 +68,11 @@
 
 ## Set up frontend
 1. npm init -y => package.json 
+<<<<<<< HEAD
 2. npm install webpack webpack-cli react react-dom react-router react-router-dom redux react-redux redux-logger @babel/core @babel/preset-env @babel/preset-react babel-loader redux-logger redux-thunk
+=======
+2. npm install webpack webpack-cli react react-dom react-router react-router-dom redux react-redux redux-logger redux-thunk @babel/core @babel/preset-env @babel/preset-react babel-loader
+>>>>>>> 57a1d26e6323011a337222996a1bfe303cf4fc3c
 3. in package.json, make sure the webpack version is under 5, you can change the version to 4.29.3
 4. "start": "webpack --watch --mode=development"  => npm start is ok
 5. create a file - webpack.config.js 
